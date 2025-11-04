@@ -124,7 +124,7 @@ def main():
 
     for key in results.keys():
         results[key] /= steps
-    format_results = (f"PSNR: {results['PSNR']:.4f},  SSIM: {results['PSNR']:.4f}, LPIPS: {results['LPIPS']:.4f}, "
+    format_results = (f"PSNR: {results['PSNR']:.4f},  SSIM: {results['SSIM']:.4f}, LPIPS: {results['LPIPS']:.4f}, "
                       f"FloLPIPS: {results['FloLPIPS']:.4f}, L1: {results['L1']:.4f}")
     accelerator.wait_for_everyone()
     if accelerator.is_local_main_process:
