@@ -87,10 +87,10 @@ class KLLPIPSWithDiscriminator(nn.Module):
             # generator update
             if cond is None:
                 assert not self.disc_conditional
-                logits_fake = self.discriminator(reconstructions.contiguous())
+                logits_fake = discriminator(reconstructions.contiguous())
             else:
                 assert self.disc_conditional
-                logits_fake = self.discriminator(torch.cat((reconstructions.contiguous(), cond), dim=1))
+                logits_fake = discriminator(torch.cat((reconstructions.contiguous(), cond), dim=1))
             g_loss = -torch.mean(logits_fake)
 
             d_weight = self.calculate_adaptive_weight(nll_loss, g_loss, last_layer=last_layer)
@@ -111,11 +111,11 @@ class KLLPIPSWithDiscriminator(nn.Module):
         if optimizer_idx == 1:
             # second pass for discriminator update
             if cond is None:
-                logits_real = self.discriminator(inputs.contiguous().detach())
-                logits_fake = self.discriminator(reconstructions.contiguous().detach())
+                logits_real = discriminator(inputs.contiguous().detach())
+                logits_fake = discriminator(reconstructions.contiguous().detach())
             else:
-                logits_real = self.discriminator(torch.cat((inputs.contiguous().detach(), cond), dim=1))
-                logits_fake = self.discriminator(torch.cat((reconstructions.contiguous().detach(), cond), dim=1))
+                logits_real = discriminator(torch.cat((inputs.contiguous().detach(), cond), dim=1))
+                logits_fake = discriminator(torch.cat((reconstructions.contiguous().detach(), cond), dim=1))
 
             disc_factor = adopt_weight(self.disc_factor, global_step, threshold=self.discriminator_iter_start)
             d_loss = disc_factor * self.disc_loss(logits_real, logits_fake)
