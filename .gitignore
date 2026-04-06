@@ -1,0 +1,5 @@
+datasets/
+/venv/
+split_dataset.py
+*.pyc
+output/

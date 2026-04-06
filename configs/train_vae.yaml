@@ -17,28 +17,26 @@ model_args:
   add_attn_encoder: true
   add_attn_decoder: true
   add_attn_type: "temporal_attn"
-dataset_name: "LAVIB"
-val_dataset_name: "DAVIS"
+dataset_name: "MyTripletsTrain"
+val_dataset_name: "MyTripletsVal"
 dataset_args:
-  LAVIB:
-    split_name: "train"
-    data_dir: datasets/LAVIB
+  MyTripletsTrain:
+    data_dir: /mnt/d/VFI/Dataset/EDEN/train
     height: 256
-    width: 448
-    dur_list: [3, 5, 7]
-    dur_weights: [1.0, 0.0, 0.0]
-  DAVIS:
-    data_dir: datasets/DAVIS
+    width: 256
+    is_val: false
+  MyTripletsVal:
+    data_dir: /mnt/d/VFI/Dataset/EDEN/val
     height: 256
-    width: 448
+    width: 256
     is_val: true
 dataloader:
-  batch_size: 32
+  batch_size: 16
   shuffle: true
   drop_last: true
   num_workers: 8
 val_dataloader:
-  batch_size: 32
+  batch_size: 16
   num_workers: 8
 output_dir: output # experiment outputs dir
 global_seed: 0
