@@ -5,6 +5,7 @@ cos_sim_mean: 0.990539
 cos_sim_std: 0.0608093
 vae_scaler: 0.179437
 vae_shift: 0.770202
+
 model_args:
   in_dim: 3
   out_dim: 3
@@ -21,21 +22,19 @@ model_args:
   use_xformers: true
   add_attn_decoder: true
   add_attn_type: "temporal_attn"
-dataset_name: "DAVIS"
+
+dataset_name: "MyTripletsVal"
 dataset_args:
-  DAVIS:
-    data_dir: datasets/DAVIS
-    height: 480
-    width: 854
-  DAIN_HD:
-    data_dir: datasets/DAIN_HD
-    res: 544
-  SNU_FILM:
-    data_dir: datasets/SNU_FILM
-    mode: extreme
+  MyTripletsVal:
+    data_dir: /mnt/d/VFI/Dataset/EDEN/test
+    height: 1080
+    width: 1920
+    is_val: true
+
 dataloader:
   batch_size: 1
   num_workers: 8
+
 output_dir: output/
-save_generated_frames: true
+save_generated_frames: false
 global_seed: 0
