@@ -21,12 +21,12 @@ dataset_name: "MyTripletsTrain"
 val_dataset_name: "MyTripletsVal"
 dataset_args:
   MyTripletsTrain:
-    data_dir: /mnt/d/VFI/Dataset/EDEN/train
+    data_dir: datasets/train
     height: 256
     width: 256
     is_val: false
   MyTripletsVal:
-    data_dir: /mnt/d/VFI/Dataset/EDEN/val
+    data_dir: datasets/val
     height: 256
     width: 256
     is_val: true

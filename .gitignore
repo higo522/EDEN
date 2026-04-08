@@ -3,3 +3,5 @@ datasets/
 split_dataset.py
 *.pyc
 output/
+checkpoints/
+examples/
