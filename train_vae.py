@@ -112,7 +112,7 @@ def main():
     recon_loss, lpips_loss, gan_loss, kl_loss, gan_weight = 0, 0, 0, 0, 0
     pre_best_ckpt_path = None
     start_time = time()
-    total_steps = steps_one_epoch * train_steps
+    total_steps = steps_one_epoch * train_epochs
     logger.info(f"Training for {train_epochs} epochs ({total_steps} steps)...")
     for epoch in range(train_epochs):
         logger.info(f"Beginning epoch {epoch}")

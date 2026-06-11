@@ -1,6 +1,7 @@
 from src.datasets.LAVIB import LAVIBDataset
 from src.datasets.DAVIS import DAVISDataset
 from src.datasets.DAIN_HD import HDDataset
+from src.datasets.MyTriplets import MyTripletsDataset
 from src.datasets.SNU_FILM import SNUFILMDataset
 
 
@@ -11,6 +12,10 @@ def load_dataset(dataset_name, **dataset_args):
         return DAVISDataset(**dataset_args)
     elif dataset_name == "DAIN_HD":
         return HDDataset(**dataset_args)
+    elif dataset_name == "MyTripletsTrain":
+        return MyTripletsDataset(**dataset_args)
+    elif dataset_name == "MyTripletsVal":
+        return MyTripletsDataset(**dataset_args)
     elif dataset_name == "SNU_FILM":
         return SNUFILMDataset(**dataset_args)
     else:

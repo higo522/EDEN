@@ -1,0 +1,10 @@
+datasets/
+data/
+/venv/
+split_dataset.py
+*.pyc
+output/
+checkpoints/
+examples/
+output/
+snufilm/

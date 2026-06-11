@@ -9,6 +9,7 @@ import transformers
 import diffusers
 import torch
 import argparse
+from pathlib import Path
 from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 import logging
@@ -19,6 +20,21 @@ import warnings
 
 warnings.filterwarnings("ignore")
 logger = get_logger(__name__, log_level="INFO")
+
+
+def build_visualization_name(dataset, sample_index):
+    sample_meta = dataset.meta_data[sample_index][0]
+    if isinstance(sample_meta, Path):
+        data_root = getattr(dataset, "data_root", None)
+        if isinstance(data_root, Path):
+            try:
+                relative_path = sample_meta.relative_to(data_root)
+            except ValueError:
+                relative_path = sample_meta
+        else:
+            relative_path = sample_meta
+        return "__".join(relative_path.with_suffix("").parts) + ".png"
+    return f"sample_{sample_index:07d}.png"
 
 
 def main():
@@ -41,6 +57,13 @@ def main():
         experiment_dir = f"{output_dir}/{experiment_index:03d}"
         visualization_dir = f"{experiment_dir}/visualization_results"
         os.makedirs(visualization_dir, exist_ok=True)
+        if args.save_generated_frames:
+            blended_dir = f"{visualization_dir}/blended_input"
+            gt_dir = f"{visualization_dir}/ground_truth"
+            generated_dir = f"{visualization_dir}/generated"
+            os.makedirs(blended_dir, exist_ok=True)
+            os.makedirs(gt_dir, exist_ok=True)
+            os.makedirs(generated_dir, exist_ok=True)
         evaluation_dir = f"{experiment_dir}/evaluation_results"
         os.makedirs(evaluation_dir, exist_ok=True)
         logging.basicConfig(
@@ -81,10 +104,12 @@ def main():
     cal_metrics = CalMetrics()
 
     model, dataloader = accelerator.prepare(model, dataloader)
+    raw_model = accelerator.unwrap_model(model)
 
     # begin training
     model.eval()
     steps = 0
+    saved_triplet_index = 0
     results = {"PSNR": 0., "SSIM": 0., "LPIPS": 0., "FloLPIPS": 0., "L1": 0.}
     logger.info(f"Evaluating for {steps_one_epoch} steps...")
     for _, batch in enumerate(dataloader):
@@ -98,9 +123,9 @@ def main():
             b, _, h, w = cond_frames.shape
             noise = torch.randn([b // 2, h // 32 * w // 32, args.model_args["latent_dim"]]).to(accelerator.device)
             denoise_kwargs = {"cond_frames": cond_frames, "difference": difference}
-            samples = sample_fn(noise, model.module.denoise, **denoise_kwargs)[-1]
+            samples = sample_fn(noise, raw_model.denoise, **denoise_kwargs)[-1]
             denoise_latents = samples / args.vae_scaler + args.vae_shift
-            generated_frames = model.module.decode(denoise_latents)
+            generated_frames = raw_model.decode(denoise_latents)
             generated_frames = padder.unpad(generated_frames.clamp(0., 1.))
         psnr = cal_metrics.cal_psnr(generated_frames, gt)
         ssim = cal_metrics.cal_ssim(generated_frames, gt)
@@ -118,8 +143,14 @@ def main():
         if args.save_generated_frames:
             if accelerator.is_local_main_process:
                 blended_input = frame_0 * 0.5 + frame_1 * 0.5
-                gt_generated_frames = torch.cat((blended_input, gt, generated_frames), dim=0)
-                save_image(gt_generated_frames, f"{visualization_dir}/steps{steps:07d}.png")
+                for sample_idx, (blended_sample, gt_sample, generated_sample) in enumerate(
+                    zip(blended_input, gt, generated_frames)
+                ):
+                    file_name = build_visualization_name(dataset, saved_triplet_index + sample_idx)
+                    save_image(blended_sample, f"{blended_dir}/{file_name}")
+                    save_image(gt_sample, f"{gt_dir}/{file_name}")
+                    save_image(generated_sample, f"{generated_dir}/{file_name}")
+                saved_triplet_index += len(generated_frames)
                 logger.info(f"Saved visualization results to {visualization_dir}")
 
     for key in results.keys():

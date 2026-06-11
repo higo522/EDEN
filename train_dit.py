@@ -118,7 +118,7 @@ def main():
     cos_sim_mean, cos_sim_std = args.cos_sim_mean, args.cos_sim_std
     pre_best_ckpt_path = None
     start_time = time()
-    total_steps = steps_one_epoch * train_steps
+    total_steps = steps_one_epoch * train_epochs
     logger.info(f"Training for {train_epochs} epochs ({total_steps} steps)...")
     for epoch in range(train_epochs):
         logger.info(f"Beginning epoch {epoch}")

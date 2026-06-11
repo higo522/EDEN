@@ -31,7 +31,7 @@ nvidia-cusparse-cu11==11.7.4.91
 nvidia-nccl-cu11==2.14.3
 nvidia-nvtx-cu11==11.7.91
 opencv-python-headless==4.5.5.64
-OpenOccupancy==0.0
+#OpenOccupancy==0.0
 packaging==24.2
 pandas==2.1.3
 pillow==11.1.0
