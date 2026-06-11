@@ -23,18 +23,16 @@ model_args:
   add_attn_decoder: true
   add_attn_type: "temporal_attn"
 
-dataset_name: "MyTripletsVal"
+dataset_name: "SNU_FILM"
 dataset_args:
-  MyTripletsVal:
-    data_dir: datasets
-    height: 1080
-    width: 1920
-    is_val: true
+  SNU_FILM:
+    data_dir: data/SNU-FILM
+    mode: extreme
 
 dataloader:
   batch_size: 1
   num_workers: 8
 
-output_dir: output/
+output_dir: output/snu_film_extreme
 save_generated_frames: true
 global_seed: 0
