@@ -26,9 +26,9 @@ model_args:
 dataset_name: "MyTripletsVal"
 dataset_args:
   MyTripletsVal:
-    data_dir: datasets
-    height: 1080
-    width: 1920
+    data_dir: datasets/test
+    height: 256
+    width: 256
     is_val: true
 
 dataloader:
@@ -36,5 +36,5 @@ dataloader:
   num_workers: 8
 
 output_dir: output/
-save_generated_frames: true
+save_generated_frames: false
 global_seed: 0
